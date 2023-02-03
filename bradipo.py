@@ -20,6 +20,7 @@ import logging
 from urllib.request import Request, urlopen, urlretrieve
 import json
 import os
+from progressbar import ProgressBar
 
 
 def download_page(url):
@@ -74,8 +75,10 @@ def get_manifest(page):
 def set_metadata(manifest):
     logging.debug('Setting metadata')
     context = manifest['metadata'][3]['value'].split(' > ')
+    year = manifest['metadata'][2]['value'].split('/')
+    year = year[0].split(' - ')
     metadata = {
-        'year': manifest['metadata'][0]['value'],
+        'year': year[0],
         'type': manifest['metadata'][1]['value'],
         'archive': context[0],
         'source': context[1],
@@ -92,26 +95,29 @@ def main():
 
     parser.add_argument('url',
                         help = 'URL of the archive')
-    parser.add_argument('--download',
-                        action = 'store_false',
-                        help = 'Download and save records')
+    parser.add_argument('--debug', action='store_true')
     args = parser.parse_args()
 
-    logging.basicConfig(level=logging.DEBUG)
+    if (args.debug):
+        logging.basicConfig(level=logging.DEBUG)
+    else:
+        logging.basicConfig(level=logging.INFO)
     logging.debug('Booting up')
     page = download_page(args.url)
     manifest = get_manifest(page)
     metadata = set_metadata(manifest)
     records = manifest['sequences'][0]['canvases']
 
-    if (args.download):
-        logging.debug('Starting to download')
-        page_number = 1
+    logging.debug('Starting to download')
+    page_number = 1
+    with ProgressBar(max_value=metadata['pages']) as bar:
+        print('{city}: {type} ({year})'.format(**metadata))
         for record in records:
             download_record(url = record['images'][0]['resource']['@id'],
                             path = get_path(metadata),
                             page_number = page_number)
             page_number = page_number + 1
+            bar.update(page_number)
 
 
 if __name__ == "__main__":
