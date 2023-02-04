@@ -35,7 +35,8 @@ def download_record(url, path, page_number):
     if not os.path.exists(path):
         os.makedirs(path)
     full_path = path + '/' + str(page_number).zfill(4) + '.jpg'
-    urlretrieve(url, full_path)
+    if not os.path.exists(full_path):
+        urlretrieve(url, full_path)
 
 def get_archive_id(page):
     logging.debug('Getting the ID')
