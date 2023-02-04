@@ -123,8 +123,9 @@ def main():
             download_record(url = record['images'][0]['resource']['@id'],
                             path = get_path(metadata),
                             page_number = page_number)
-            page_number = page_number + 1
-            bar.update(page_number)
+            if (page_number < last_page):
+                page_number = page_number + 1
+                bar.update(page_number)
 
 
 if __name__ == "__main__":
