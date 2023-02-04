@@ -20,7 +20,7 @@ import logging
 from urllib.request import Request, urlopen, urlretrieve
 import json
 import os
-from progressbar import ProgressBar
+from progressbar import ProgressBar, streams
 
 
 def download_page(url):
@@ -99,6 +99,7 @@ def main():
     parser.add_argument('--debug', action='store_true')
     args = parser.parse_args()
 
+    streams.wrap_stderr()
     if (args.debug):
         logging.basicConfig(level=logging.DEBUG)
     else:
