@@ -95,8 +95,12 @@ def main():
                     )
 
     parser.add_argument('url',
-                        help = 'URL of the archive')
-    parser.add_argument('--debug', action='store_true')
+                        help='URL of the archive')
+    parser.add_argument('--debug',
+                        action='store_true')
+    parser.add_argument('--start-at',
+                        type=int,
+                        default=1)
     args = parser.parse_args()
 
     streams.wrap_stderr()
@@ -111,8 +115,9 @@ def main():
     records = manifest['sequences'][0]['canvases']
 
     logging.debug('Starting to download')
-    page_number = 1
-    with ProgressBar(max_value=metadata['pages']) as bar:
+    page_number = args.start_at
+    last_page = metadata['pages'] + page_number - 1
+    with ProgressBar(max_value=last_page) as bar:
         print('{city}: {type} ({year})'.format(**metadata))
         for record in records:
             download_record(url = record['images'][0]['resource']['@id'],
