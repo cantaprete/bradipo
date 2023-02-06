@@ -23,14 +23,14 @@ import os
 from progressbar import ProgressBar, streams
 
 
-def download_page(url):
+def download_page(url: str):
     logging.debug('Downloading page: ' + url)
     response = urlopen(url)
     html_bytes = response.read()
     page = html_bytes.decode('utf-8')
     return page
 
-def download_record(url, path, page_number):
+def download_record(url: str, path: str, page_number: int, last_page: int):
     logging.debug(f'Downloading page no. {page_number}')
     if not os.path.exists(path):
         os.makedirs(path)
@@ -38,7 +38,7 @@ def download_record(url, path, page_number):
     if not os.path.exists(full_path):
         urlretrieve(url, full_path)
 
-def get_archive_id(page):
+def get_archive_id(page: str):
     logging.debug('Getting the ID')
     string_to_find = 'let windowsId = \''
     id_index = page.find(string_to_find) + len(string_to_find)
@@ -51,7 +51,7 @@ def get_path(metadata):
     path = metadata['city'] + '/' + metadata['type'] + '/' + metadata['year']
     return path
 
-def get_manifest(page):
+def get_manifest(page: str):
     logging.debug('Getting the manifest')
     id = get_archive_id(page)
     manifest_url = f'https://dam-antenati.cultura.gov.it/antenati/containers/{id}/manifest'
@@ -73,7 +73,7 @@ def get_manifest(page):
         manifest = json.load(url)
         return manifest
 
-def set_metadata(manifest):
+def set_metadata(manifest: str):
     logging.debug('Setting metadata')
     context = manifest['metadata'][3]['value'].split(' > ')
     year = manifest['metadata'][2]['value'].split('/')
