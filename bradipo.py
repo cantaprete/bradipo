@@ -34,7 +34,8 @@ def download_record(url: str, path: str, page_number: int, last_page: int):
     logging.debug(f'Downloading page no. {page_number}')
     if not os.path.exists(path):
         os.makedirs(path)
-    full_path = path + '/' + str(page_number).zfill(4) + '.jpg'
+    padding = len(str(last_page))
+    full_path = path + '/' + str(page_number).zfill(padding) + '.jpg'
     if not os.path.exists(full_path):
         urlretrieve(url, full_path)
 
@@ -120,9 +121,10 @@ def main():
     with ProgressBar(max_value=last_page) as bar:
         print('{city}: {type} ({year})'.format(**metadata))
         for record in records:
-            download_record(url = record['images'][0]['resource']['@id'],
-                            path = get_path(metadata),
-                            page_number = page_number)
+            download_record(url=record['images'][0]['resource']['@id'],
+                            path=get_path(metadata),
+                            page_number=page_number,
+                            last_page=last_page)
             if (page_number < last_page):
                 page_number = page_number + 1
                 bar.update(page_number)
