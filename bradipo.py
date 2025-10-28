@@ -1,7 +1,7 @@
 import argparse
 import logging
 import urllib
-from urllib.request import Request, urlopen, urlretrieve
+from urllib.request import HTTPError, Request, urlopen, urlretrieve
 import json
 import os
 import re
@@ -51,8 +51,17 @@ def download_record(url: str, path: str, page_number: int, last_page: int, quali
     if not os.path.exists(full_path):
         parts = url.split('full', 2)
         url = parts[0] + 'full' + parts[1] + str(quality) + ',' + parts[2]
-        logging.debug('Downloading url %s', url)
-        urlretrieve(url, full_path)
+        try:
+            logging.debug('Downloading url %s', url)
+            urlretrieve(url, full_path)
+        except HTTPError as err:
+            if err.code == 403:
+                logging.error('403 error')
+                url = url.replace(str(quality), str(round(quality / 2)))
+                logging.debug('Downloading url %s', url)
+                urlretrieve(url, full_path)
+            else:
+                raise
 
 def get_archive_id(page: str):
     logging.debug('Getting the ID')
@@ -120,12 +129,13 @@ def main():
     page = download_page(args.url)
     manifest = get_manifest(page)
     quality = 1024
-    if args.quality.isnumeric():
+    if type(args.quality) is int:
         quality = args.quality
     elif args.quality == 'high':
         quality = 2048
     elif args.quality == 'low':
         quality = 512
+    logging.debug('Quality set to %spx', quality)
     metadata = set_metadata(manifest)
     records = manifest['sequences'][0]['canvases']
 
