@@ -1,3 +1,10 @@
+#!/usr/bin/env -S uv run --script
+# /// script
+# dependencies = [
+#   "progressbar2"
+# ]
+# ///
+
 import argparse
 import logging
 import urllib
