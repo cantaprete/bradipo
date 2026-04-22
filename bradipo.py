@@ -17,14 +17,14 @@ from progressbar import ProgressBar, streams
 opener = urllib.request.build_opener()
 opener.addheaders = [
     ('Accept', '*/*'),
-    ('Accept-Encoding', 'deflate, br'),
+    ('Accept-Encoding', '*'),
     ('Accept-Language', 'it-IT,it;q=0.9'),
     ('Cache-Control', 'no-cache'),
     ('Connection', 'keep-alive'),
     ('Pragma', 'no-cache'),
     ('Priority', 'u=5, i'),
     ('Referer', 'https://antenati.cultura.gov.it/'),
-    ('Sec-Fetc-Dest', 'image'),
+    ('Sec-Fetc-Dest', 'empty'),
     ('Sec-Fetch-Mode', 'no-cors'),
     ('Sec-Fetch-Site', 'same-site'),
     ('User-Agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 Safari/605.1.15')
